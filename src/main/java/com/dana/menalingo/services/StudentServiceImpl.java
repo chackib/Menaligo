@@ -1,8 +1,8 @@
 package com.dana.menalingo.services;
 
 import com.dana.menalingo.dto.StudentDto;
-
 import com.dana.menalingo.entities.Student;
+import com.dana.menalingo.exceptions.ResourceNotFoundException;
 import com.dana.menalingo.mappers.StudentMapper;
 import com.dana.menalingo.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public StudentDto getStudentById(Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Student not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
         return studentMapper.studentToStudentDto(student);
     }
 
@@ -50,22 +50,21 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id: " + id));
 
         // Update existing student with the values from the DTO
-        existingStudent.setName(studentDto.getName());
-        existingStudent.setCountry(studentDto.getCountry());
-        existingStudent.setSpeakLanguages(studentDto.getSpeakLanguages());
-        existingStudent.setTeachLanguages(studentDto.getTeachLanguages());
+        existingStudent.setFirstName(studentDto.getFirstName());
+        existingStudent.setLastName(studentDto.getLastName());
+        existingStudent.setEmail(studentDto.getEmail());
         // Update other attributes as needed
 
         // Save the updated student
         Student updatedStudent = studentRepository.save(existingStudent);
 
         // Map the updated student back to DTO and return
-        return studentMapper.entityToDto(updatedStudent);
+        return studentMapper.studentToStudentDto(updatedStudent);
     }
 
     @Override
     public void deleteStudent(Long id) {
-        // Your implementation goes here
-        // Example: Delete student by id
+        // Implement your logic to delete a student by ID
+        studentRepository.deleteById(id);
     }
 }
